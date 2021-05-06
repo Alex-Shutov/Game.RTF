@@ -8,9 +8,7 @@ namespace Game_Prototype
 {
     public class Physics
     {
-        //public float ApplyGravity => CalculateGravity();
         public Transform transform;
-        //private float gravity;
         private float a;
         public float dx;
         public bool isJumping;
@@ -21,10 +19,6 @@ namespace Game_Prototype
             transform = new Transform(pos, size);
             gravity = 0;
             a = 0.45f;
-           // dx = 0;
-            //IsGravityActive = true;
-           //vertSpeed = minfall;
-            //last = DateTime.Now;
             isJumping = false;
         }
 
@@ -53,7 +47,6 @@ namespace Game_Prototype
 
             if (!isJumping)
             {
-             //   isActivated = true;
                 isJumping = true;
                 gravity = -10;
             }
@@ -102,6 +95,7 @@ namespace Game_Prototype
 
         public bool Collide()
         {
+
             return false;
         }
     }

@@ -30,14 +30,9 @@ namespace Game_Prototype
         {
             force = 8;
             velocityForCamera = 8;
-            velocityForPlayer = 12;
             maze = MakeMaze(MazeHeight, MazeWidth);
             player = new Player(new Point(plX, plY), new Size(107, 132));
-            tmpLabel = new Label()
-            {
-                Text = UpdateLabel(),
-                Size = new Size(200, 200)
-            };
+            
             #region
 
             //dictActions = new Dictionary<Keys, Action>()
@@ -59,7 +54,14 @@ namespace Game_Prototype
                 Width = 2000,
 
             };
+            tmpLabel = new Label()
+            {
+                Text = UpdateLabel(),
+                Size = new Size(200, 200),
+                Location = new Point(1000,0)
+            };
             box.Paint += new PaintEventHandler(DrawPlayer);
+            box.Controls.Add(tmpLabel);
 
         }
         //public void MakePermutations
@@ -69,20 +71,20 @@ namespace Game_Prototype
             switch (e.KeyCode)
             {
                 case Keys.A:
-                    goLeft = true;
+                    player.permutation.goLEFT = true;
                     player.image = Sources.idle_3_1;
                     player.image.RotateFlip(RotateFlipType.Rotate180FlipY);
                     player.dx = 8;
                     break;
                 case Keys.D:
-                    goRight = true;
+                    player.permutation.goRIGHT = true;
                     player.image = Sources.idle_3_1;
                     player.dx = 4;
                     
                     break;
                 case Keys.W when !jumping:
                     jumping = true;
-                    
+                    player.permutation.goUP = true;
                     break;
                 
             }
@@ -105,75 +107,53 @@ namespace Game_Prototype
 
         public async void MainTimerEvent(int rightSide, EventArgs e)
         {
-            #region MyRegion
 
-
+            //TODO Переделать управление -> лагает
 
             //player.CreatureBox.Top += jumpVelocity;
-            if (goLeft && player.physics.transform.position.X > 60  )
-            {
-              //await Task.Run(() => player.transform.position.X -= velocityForPlayer);
-                player.physics.transform.position.X -= velocityForPlayer;
-                //return;
-            }
-
-            else if (goRight && player.physics.transform.position.X + player.physics.transform.size.Width <1600 )
-            {
-                //await Task.Run(() => player.transform.position.X += velocityForPlayer);
-                player.physics.transform.position.X += velocityForPlayer;
-                //return;
-            }
-
-            if (goLeft && box.Left < 0)
-            {
-                //await Task.Run(() => box.Left += velocityForCamera);  
-                 box.Left += velocityForCamera;
-                //  return;
-                if (jumping)
-                {
-                    player.physics.AddForce();
-                    player.physics.ApplyPhysics();
-                    // box.Refresh();
-                }
-                else
-                {
-                    player.physics.DownForce();
-                }
-                box.Refresh();
-                return;
-            }
-
-            if (goRight && box.Left > -500)
-            {
-                //await Task.Run(() => box.Left -= velocityForCamera);
-                box.Left -= velocityForCamera;
-                
-                if (jumping)
-                {
-                    player.physics.AddForce();
-                    player.physics.ApplyPhysics();
-                   // box.Refresh();
-                }
-                else
-                {
-                    player.physics.DownForce();
-                }
-                box.Refresh();
-                return;
-            }
-
-            //if (jumping)
+            #region MyRegion
+            //if (goLeft && player.physics.transform.position.X > 60)
             //{
-            //    player.physics.AddForce();
-            //    player.physics.ApplyPhysics();
-            //    box.Refresh();
-            //    return;
+            //    player.physics.transform.position.X -= velocityForPlayer;
             //}
 
-            player.physics.DownForce();
-                box.Refresh();
-                #endregion
-           
+            //else if (goRight && player.physics.transform.position.X + player.physics.transform.size.Width < 1600)
+            //{
+            //    player.physics.transform.position.X += velocityForPlayer;
+            //}
+
+            ////if (goLeft && box.Left < 0)
+            ////{
+            ////    box.Left += velocityForCamera;
+            ////    tmpLabel.Left -= velocityForCamera;
+            ////} 
+            #endregion
+
+            //player.physics.transform.position.X = player.Move(player.physics.transform.position.X, player.permutation.velocityForPlayer, 0);
+            player.UpdatePlayer();
+            //TODO вынести код ниже в карту
+            if (player.permutation.goRIGHT && box.Left > -500)
+            {
+                box.Left -= velocityForCamera;
+                tmpLabel.Left += velocityForCamera;
+            }
+            if (player.permutation.goLEFT && box.Left < 0)
+            {
+                box.Left += velocityForCamera;
+                tmpLabel.Left -= velocityForCamera;
+            }
+            if (jumping)
+            {
+                player.physics.AddForce();
+                player.physics.ApplyPhysics();
+            }
+            else
+            {
+                player.physics.DownForce();
+            }
+            box.Refresh();
+            tmpLabel.Text = UpdateLabel();
+
         }
 
         
@@ -203,102 +183,34 @@ namespace Game_Prototype
         {
             #region MyRegion
 
-
-
             switch (e.KeyCode)
             {
                 case Keys.D:
-                    goRight = false;
-                    //player.image = Sources.idle_3_1;
-                    //player.dx = 5;
+                    player.permutation.goRIGHT = false;
                     break;
                 case Keys.A:
-                    goLeft = false;
-                    //player.image = Sources.idle_3_1;
-                    //player.image.RotateFlip(RotateFlipType.Rotate180FlipY);
-                    //player.dx = 8;
+                    player.permutation.goLEFT = false;
                     break;
             }
 
             if (jumping)
             {
                 jumping = false;
+                player.permutation.goUP = false;
+                player.permutation.goDOWN = true;
             }
             #endregion
         }
-        public void PlayerMove()
-        {
-            #region MyRegion
-
-
-
-
-            //switch (keysFromForm)
-            //{
-            //    case Keys.W:
-            //        Jump(DateTime.Now.Millisecond / 100f);
-            //        break;
-            //    case Keys.A:
-            //        player.Move(player.CreatureBox.Location.X - 1, player.CreatureBox.Location.Y);
-            //        break;
-            //    case Keys.S:
-            //        player.Move(player.CreatureBox.Location.X, player.CreatureBox.Location.Y + 1);
-            //        break;
-            //    case Keys.D:
-            //        player.Move(player.CreatureBox.Location.X+1, player.CreatureBox.Location.Y);
-            //        break;
-            //}
-
-            #endregion
-
-            //    //dictActions.TryGetValue(keysFromForm, out var action);
-
-            //    //switch (keysFromForm)
-            //    //{
-            //    //    case Keys.D:
-            //    //        MoveRight();
-            //    //        break;
-            //    //    case Keys.A:
-            //    //        MoveLeft();
-            //    //        break;
-            //    //}
-            //    //var tmpbool = rect.Any(elRectangle => elRectangle.IntersectsWith(player.CreatureBox.Bounds));
-            //    // var tmp = rect.Any(elRectangle => new Rectangle(elRectangle.X+1,elRectangle.Y+1,elRectangle.Width,elRectangle.Height).IntersectsWith(player.CreatureBox.Bounds));
-
-            //    //foreach (Control x in box.Controls)
-            //    //{
-            //    //    //box.FindForm().Controls.Add(x);
-            //    //    //x.Location = x.PointToScreen(new Point());
-            //    //    if ((string)x.Tag == "wall")
-            //    //    {
-            //    //        if (player.CreatureBox.Bounds.IntersectsWith(x.Bounds))
-            //    //            return;
-
-            //    //    }
-
-
-            //    //    //   //s player.CreatureBox.BringToFront();
-            //    //    //}
-
-            //    //}
-            //    dictActions[keysFromForm].Invoke();
-            //       // action?.Invoke();
-            //        //tmpLabel.Text =UpdateLabel();
-            //}
-        }
-
-
         public string UpdateLabel()
         {
-            return "   ";
-            //$"HP: {player.HP}\nIsAgressive: {player.isAgressive}\nLocation:{player.CreatureBox.Location}\nPress:{keysFromForm}";
+            return $"HP: {player.HP}\nIsAgressive: {player.isAgressive}\nLocation:{player.physics.transform.position}\n";
         }
 
-        public void Jump(float a)
-        {
-            if ((keysFromForm & Keys.W) == Keys.W) 
-               player.CreatureBox.Location = new Point(player.CreatureBox.Location.X, player.CreatureBox.Location.Y-1);
-        }
+        //public void Jump(float a)
+        //{
+        //    if ((keysFromForm & Keys.W) == Keys.W) 
+        //       player.CreatureBox.Location = new Point(player.CreatureBox.Location.X, player.CreatureBox.Location.Y-1);
+        //}
 
         private static Maze MakeMaze(int MazeWidth, int MazeHeight)
         {
@@ -310,8 +222,6 @@ namespace Game_Prototype
 
         public void PrintMaze()
         {
-            //  box.Image = new Bitmap(box.Width, box.Height);
-            //graphics = Graphics.FromImage(box.Image);
             var t = new Bitmap(box.Width, box.Height);
             var side = 95;
             var g = Graphics.FromImage(t);
@@ -324,6 +234,7 @@ namespace Game_Prototype
                     if (maze.maze[x, y] == MapCell.Wall)
                     {
                         g.DrawImage(Sources.Tile_1, x * side, y * side, side, side);
+                        #region MyRegion
                         //rect.Add(new Rectangle(x * side, y * side, side, side));
                         //var e = new PictureBox()
                         //{
@@ -332,15 +243,14 @@ namespace Game_Prototype
                         //    Location = new Point(x * side, y * side),
                         //    Size = new Size(side, side)
                         //};
-                        //box.Controls.Add(e);
+                        //box.Controls.Add(e); 
+                        #endregion
+
                     }
                 }
             }
-
             box.Image = t;
-            // box.Controls.Add(player.CreatureBox);
-            //player.CreatureBox.BringToFront();
-            
+
         }
 
         public Maze CheckMaze(int MazeWidth, int MazeHeight)

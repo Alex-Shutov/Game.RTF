@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Security.Cryptography.Xml;
 
 namespace Game_Prototype
 {
     class Player : Creature
     {
-
-        //public ImageList listImages;
+        public PermutationForPlayer permutation;
         private int check;
         public int frameCount;
         public int animationCount;
@@ -17,37 +13,37 @@ namespace Game_Prototype
         public Physics physics;
         public Player(PointF x, Size y)
         {
-        //    listImages = new ImageList()
-        //    {
-        //        ImageSize = new Size(140,140),
-        //        Images =
-        //        {
-        //            Sources._1, Sources._2, Sources._3, Sources._4, Sources._5, Sources._6, Sources._7, Sources._8
-        //        }
-        //    };
-           // transform = new Transform(x, y);
-            //CreatureBox = new PictureBox()
-            //{
-            //   // BackColor = Color.Black,
-            //    SizeMode = PictureBoxSizeMode.CenterImage,
-            //};
-            frameCount = 0;
-            animationCount = 0;
+            permutation = new PermutationForPlayer();
+            permutation.Setvelocity(9);
             HP = 100;
             image = Sources.idle_3_1;
             dx = 3;
-            physics = new Physics(pos:x, size:y);
+            physics = new Physics(pos: x, size: y);
         }
-        public override void Move(int x, int y)
+
+        public void UpdatePlayer()
         {
-           // var tmp = CreatureBox.Location.Y;
-            base.Move(x,y);
-            //GetHP(tmp);
+            physics.transform.position.X = Move(physics.transform.position.X, permutation.velocityForPlayer, 0);
+        }
+        public override float Move(float f, int velocity, int direction)
+        {
+            if (permutation.goLEFT && physics.transform.position.X > 60)
+            {
+                return base.Move(physics.transform.position.X, velocity, -1);
+            }
+
+            if (permutation.goRIGHT && physics.transform.position.X + physics.transform.size.Width < 1600)
+            {
+                return base.Move(physics.transform.position.X, velocity, 1);
+            }
+
+            return physics.transform.position.X;
         }
 
         public override void DrawSprites(Graphics g, Image image, Rectangle destRectangle, Rectangle sourceRectangle)
         {
             animationCount++;
+            #region Draw(optional)
             //g.DrawImage(Sources.idle_3_1, new Rectangle((int)transform.position.X, (int)transform.position.Y, 90, 150), new Rectangle(frameCount * 92+5, 0, 95, 150),
             //    GraphicsUnit.Pixel);
             //frameCount++;
@@ -74,26 +70,18 @@ namespace Game_Prototype
             //    _ => frameCount
             //};
             //if (physics.isJumping)
-                //base.DrawSprites(g, image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, 90, 150), new Rectangle(frameCount * 92 + dx, 0, 95, 150));
-            base.DrawSprites(g,image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, 90, 150), new Rectangle(frameCount * 92 + dx, 0, 95, 150));
-            //if (animationCount > 40)
-            //    animationCount = 0;
-            // }
-                frameCount++;
+            //base.DrawSprites(g, image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, 90, 150), new Rectangle(frameCount * 92 + dx, 0, 95, 150)); 
+            #endregion
+            base.DrawSprites(g, image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, 90, 150), new Rectangle(frameCount * 92 + dx, 0, 95, 150));
+
+            frameCount++;
             if (frameCount == 7)
                 frameCount = 0;
-            //  CreatureBox.Image = Sources.Idle_big_1;
-            //  CreatureBox.Size = new Size(85,140);
-            ////  CreatureBox.BackColor = Color.Transparent;
-            //  base.DrawSprites();
         }
 
         public void GetHP(int tmp)
         {
-            //if (tmp.Y==200)
-            //if (CreatureBox.Location.Y % 200 == 0 && CreatureBox.Location.Y != 0 && tmp.Y-CreatureBox.Location.Y<0)
-            //    HP -= 10;
-            if (tmp > CreatureBox.Location.Y)
+            if (tmp > physics.transform.position.Y)
                 check++;
             else check = 0;
             if (check % 200 == 0 && check != 0)
