@@ -16,7 +16,6 @@ namespace Game_Prototype
 {
     public partial class Form1 : Form
     {
-        private int es;
 
         private bool isPainted =false;
         private int force = 6;
@@ -108,7 +107,6 @@ namespace Game_Prototype
             InfoPanel.Controls.Add(game.tmpLabel);
            // game.box.Controls.Add(game.player.CreatureBox);
             Invalidate();
-            
         }
         //private void DrawMaze(Maze maze)
         //{
