@@ -9,8 +9,12 @@
 *.user
 *.userosscache
 *.sln.docstates
+*Form*
+!*Form1.cs
+*/Properties
+*/Resources
+*Sources*
 
-/**
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
