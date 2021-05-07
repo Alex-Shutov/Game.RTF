@@ -41,14 +41,6 @@ namespace Game_Prototype
             KeyPreview = true;
         }
 
-        //private  Task MainEventThread(EventArgs e)
-        //{  
-
-        //    var task = new Task(() => game.MainTimerEvent(this.Right, e));
-        //    task.Start();
-        //    return task;
-
-        //}
         private async void MainTimerEvent(object? sender, EventArgs eventArgs)
         {
             game.MainTimerEvent(this.Right, eventArgs);
@@ -168,9 +160,7 @@ namespace Game_Prototype
 
 
         private void StartButton_Click(object sender, EventArgs e)
-        
         {
-            
 
         }
 

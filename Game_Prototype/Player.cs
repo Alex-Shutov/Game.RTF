@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Security.Cryptography.Xml;
 
 namespace Game_Prototype
@@ -11,14 +12,14 @@ namespace Game_Prototype
         public int animationCount;
         public int dx;
         public Physics physics;
-        public Player(PointF x, Size y)
+        public Player(PointF x, Size y,HashSet<Rectangle> hashset)
         {
             permutation = new PermutationForPlayer();
             permutation.Setvelocity(9);
             HP = 100;
             image = Sources.idle_3_1;
             dx = 3;
-            physics = new Physics(pos: x, size: y);
+            physics = new Physics(pos: x, size:y,hashset);
         }
 
         public void UpdatePlayer()
@@ -27,15 +28,30 @@ namespace Game_Prototype
         }
         public override float Move(float f, int velocity, int direction)
         {
-            if (permutation.goLEFT && physics.transform.position.X > 60)
+            if (permutation.goUP)
+            {
+                physics.AddForce();
+                physics.ApplyPhysics();
+            }
+            else if (!physics.CollideBottom())
+            {
+                physics.DownForce();
+            }
+
+            if (permutation.goLEFT && physics.transform.position.X > 60 && !physics.CollideRight())
             {
                 return base.Move(physics.transform.position.X, velocity, -1);
             }
-
-            if (permutation.goRIGHT && physics.transform.position.X + physics.transform.size.Width < 1600)
+           // permutation.goRIGHT = true;
+            if (permutation.goRIGHT && physics.transform.position.X + physics.transform.size.Width < 1600 && !physics.CollideLeft())
             {
                 return base.Move(physics.transform.position.X, velocity, 1);
             }
+            else
+            {
+                
+            }
+
 
             return physics.transform.position.X;
         }

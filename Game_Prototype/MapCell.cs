@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Game_Prototype
 {
-    enum MapCell
+    public enum MapCell
     {
        
         Wall,

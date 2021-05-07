@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using tainicom;
+using tainicom.Aether.Physics2D.Collision;
 
 namespace Game_Prototype
 {
@@ -16,22 +18,18 @@ namespace Game_Prototype
         public Player player;
         public Maze maze;
         public Label tmpLabel;
-        //public Keys press;
         public PictureBox box;
-       private Physics physics;
+        public HashSet<Rectangle> HashSetRect;
+        private bool jumping;
+        private int velocityForCamera;
 
-       private Graphics gr;
-        //private 
-        private bool goRight, goLeft, jumping;
-        private int force, velocityForCamera, velocityForPlayer,jumpVelocity;
-
-        public Keys keysFromForm { get; set; }
         public GameModel(int plX, int plY, int MazeHeight, int MazeWidth)
         {
-            force = 8;
-            velocityForCamera = 8;
+            //force = 8;
+            HashSetRect = new HashSet<Rectangle>();
+            velocityForCamera = 5;
             maze = MakeMaze(MazeHeight, MazeWidth);
-            player = new Player(new Point(plX, plY), new Size(107, 132));
+            player = new Player(new Point(plX, plY), new Size(107, 132),HashSetRect);
             
             #region
 
@@ -48,7 +46,6 @@ namespace Game_Prototype
 
             box = new PictureBox()
             {
-                //Location = new Point(-100, -100),
                 BackgroundImage = Sources._123,
                 Height = 1100,
                 Width = 2000,
@@ -64,7 +61,6 @@ namespace Game_Prototype
             box.Controls.Add(tmpLabel);
 
         }
-        //public void MakePermutations
         public void KeyIsDownForPlayer(KeyEventArgs e)
         {
             
@@ -132,25 +128,17 @@ namespace Game_Prototype
             //player.physics.transform.position.X = player.Move(player.physics.transform.position.X, player.permutation.velocityForPlayer, 0);
             player.UpdatePlayer();
             //TODO вынести код ниже в карту
-            if (player.permutation.goRIGHT && box.Left > -500)
+            if (player.permutation.goRIGHT && box.Left > -500 )
             {
                 box.Left -= velocityForCamera;
                 tmpLabel.Left += velocityForCamera;
             }
-            if (player.permutation.goLEFT && box.Left < 0)
+            if (player.permutation.goLEFT && box.Left < 0 )
             {
                 box.Left += velocityForCamera;
                 tmpLabel.Left -= velocityForCamera;
             }
-            if (jumping)
-            {
-                player.physics.AddForce();
-                player.physics.ApplyPhysics();
-            }
-            else
-            {
-                player.physics.DownForce();
-            }
+
             box.Refresh();
             tmpLabel.Text = UpdateLabel();
 
@@ -203,7 +191,7 @@ namespace Game_Prototype
         }
         public string UpdateLabel()
         {
-            return $"HP: {player.HP}\nIsAgressive: {player.isAgressive}\nLocation:{player.physics.transform.position}\n";
+            return $"HP: {player.HP}\nIsAgressive: {player.isAgressive}\nLocation:{player.physics.transform.position}\nLeft:{player.permutation.goLEFT}\nRight:{player.permutation.goRIGHT}\nDown:{player.permutation.goDOWN}\nUp:{player.permutation.goUP}";
         }
 
         //public void Jump(float a)
@@ -246,6 +234,8 @@ namespace Game_Prototype
                         //box.Controls.Add(e); 
                         #endregion
 
+                        HashSetRect.Add(new Rectangle(x * side, y * side, side, side));
+
                     }
                 }
             }
@@ -259,11 +249,11 @@ namespace Game_Prototype
             {
                 maze = new [,]
                 {
-                    {MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
-                    {MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
-                    {MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
-                    {MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
-                    {MapCell.Empty, MapCell.Wall, MapCell.Wall, MapCell.Wall, MapCell.Wall},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Wall, MapCell.Wall, MapCell.Empty, MapCell.Empty, MapCell.Empty},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Wall, MapCell.Wall},
                 }
             };
             return tmp;
