@@ -11,6 +11,7 @@ namespace Game_Prototype
         public bool isJumping;
         public float gravity = -9.8f;
         private HashSet<Rectangle> HashSetWalls;
+        //public PermutationForCamera cameraMovement;
 
         public Physics(PointF pos, Size size, HashSet<Rectangle> hashHashSetWalls)
         {
@@ -19,6 +20,7 @@ namespace Game_Prototype
             a = 0.45f;
             isJumping = false;
             HashSetWalls = hashHashSetWalls;
+            
         }
 
         public void CalculatePhysics()
@@ -120,7 +122,7 @@ namespace Game_Prototype
         {
             foreach (var wall in HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X , wall.Location.Y - 5, wall.Width, 5);
+                var tmp = new Rectangle(wall.Location.X+5 , wall.Location.Y - 10, wall.Width-10, 5);
                 if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
                     transform.size)))
                     return true;
@@ -132,11 +134,16 @@ namespace Game_Prototype
         {
             foreach (var wall in HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X + 3, wall.Location.Y + 3, 1, wall.Height - 3);
-                if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
+                var tmp = new Rectangle(wall.Location.X - 10, wall.Location.Y + 3, 1, wall.Height - 3);
+                if (tmp.IntersectsWith(new Rectangle(new Point((int) transform.position.X, (int) transform.position.Y),
                     transform.size)))
+                {
+                    PermutationOfCamera.cameraLeft = false;
                     return true;
+                }
             }
+
+            PermutationOfCamera.cameraLeft = true;
 
             return false;
         }
@@ -144,12 +151,16 @@ namespace Game_Prototype
         {
             foreach (var wall in HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X + wall.Width-3, wall.Location.Y + 3, 1, wall.Height - 3);
-                if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
+                var tmp = new Rectangle(wall.Location.X + wall.Width + 10, wall.Location.Y + 3, 1, wall.Height - 3);
+                if (tmp.IntersectsWith(new Rectangle(new Point((int) transform.position.X, (int) transform.position.Y),
                     transform.size)))
+                {
+                    PermutationOfCamera.cameraRight = false;
                     return true;
+                }
             }
 
+            PermutationOfCamera.cameraRight = true;
             return false;
         }
 
@@ -157,7 +168,7 @@ namespace Game_Prototype
         {
             foreach (var wall in HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X - 3, wall.Location.Y - 1, wall.Width + 6, 1);
+                var tmp = new Rectangle(wall.Location.X + 10 , wall.Location.Y - 1, wall.Width + 6, 1);
                 if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
                     transform.size)))
                     return true;

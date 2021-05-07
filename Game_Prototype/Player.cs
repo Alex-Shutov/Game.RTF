@@ -43,16 +43,11 @@ namespace Game_Prototype
                 return base.Move(physics.transform.position.X, velocity, -1);
             }
            // permutation.goRIGHT = true;
-            if (permutation.goRIGHT && physics.transform.position.X + physics.transform.size.Width < 1600 && !physics.CollideLeft())
-            {
+           bool stateLeft = !physics.CollideLeft();
+            if (permutation.goRIGHT && physics.transform.position.X + physics.transform.size.Width < 1600 && stateLeft)
+            { 
                 return base.Move(physics.transform.position.X, velocity, 1);
             }
-            else
-            {
-                
-            }
-
-
             return physics.transform.position.X;
         }
 

@@ -27,8 +27,8 @@ namespace Game_Prototype
         {
             //force = 8;
             HashSetRect = new HashSet<Rectangle>();
-            velocityForCamera = 5;
-            maze = MakeMaze(MazeHeight, MazeWidth);
+            velocityForCamera = 9;
+            maze = CheckMaze(MazeHeight, MazeWidth);
             player = new Player(new Point(plX, plY), new Size(107, 132),HashSetRect);
             
             #region
@@ -128,12 +128,12 @@ namespace Game_Prototype
             //player.physics.transform.position.X = player.Move(player.physics.transform.position.X, player.permutation.velocityForPlayer, 0);
             player.UpdatePlayer();
             //TODO вынести код ниже в карту
-            if (player.permutation.goRIGHT && box.Left > -500 )
+            if (player.permutation.goRIGHT && box.Left > -500  && PermutationOfCamera.cameraLeft)
             {
                 box.Left -= velocityForCamera;
                 tmpLabel.Left += velocityForCamera;
             }
-            if (player.permutation.goLEFT && box.Left < 0 )
+            if (player.permutation.goLEFT && box.Left < 0 && PermutationOfCamera.cameraRight)
             {
                 box.Left += velocityForCamera;
                 tmpLabel.Left -= velocityForCamera;
