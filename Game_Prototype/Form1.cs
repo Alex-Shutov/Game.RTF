@@ -53,10 +53,9 @@ namespace Game_Prototype
         private void Init()
         {
             var side = 70;  
-            game = new GameModel(0, 0, 1920 / side, 1080 / side);
-            game.PrintMaze();
-            Controls.Add(game.box);
-            graphics = game.box.CreateGraphics();
+            game = new GameModel(0, 0, 1920 / side, 1080 / side,(this.Width,this.Height)); ;
+            this.Controls.Add(game.box);
+            //graphics = game.box.CreateGraphics();
             this.KeyDown += new KeyEventHandler(KeyIsDown);
             this.KeyUp += new KeyEventHandler(KeyIsUp);
             this.Paint += new PaintEventHandler(DrawGame);
@@ -65,34 +64,6 @@ namespace Game_Prototype
             timer1.Start();
 
         }
-        //private void DrawMaze(Maze maze)
-        //{
-        //    MazeBox.Enabled = true;
-        //    MazeBox.Image = new Bitmap(MazeBox.Width, MazeBox.Height);
-        //    graphics = Graphics.FromImage(MazeBox.Image);
-        //    var tmp = maze.GetMaze();
-        //    for (int i = 0; i < 6; i++)
-        //    {
-        //       tmp = maze.Generate();
-        //    }
-        //    PrintMaze(tmp);
-        //}
-
-
-        //private void PrintMaze(MapCell[,] maze)
-        //{
-        //    graphics = Graphics.FromImage(game.box.Image);
-        //    var side = 70;
-        //    for (int x = 0; x < maze.GetLength(0); x++)
-        //    {
-        //        for (int y = 0; y < maze.GetLength(1); y++)
-        //        {
-        //            if (maze[x, y] == MapCell.Wall)
-        //                graphics.DrawImage(Sources.Tile_1, x * side, y * side, side, side);
-        //        }
-        //    }
-        //}
-        
         private void CreateLeafs()
         {
             var root = new Leaf(0, 0, this.Width, this.Height);

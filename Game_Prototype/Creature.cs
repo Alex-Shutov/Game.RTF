@@ -1,39 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using Timer = System.Windows.Forms.Timer;
 
 namespace Game_Prototype
 {
-    abstract  class Creature
+    public abstract class Creature : ICreature
     {
-        private PermutationForPlayer perm = new PermutationForPlayer();
-        private int currentSlide = 0;
-        public Bitmap image;
-        public int HP = 0;
-        public bool isAgressive;
-        public PictureBox CreatureBox;
+        public PermutationForCreature permutation { get; set; }
+        public Bitmap image { get; set; }
+        public int HP { get; set; }
+        public bool isAgressive { get; set; }
+        
+        public Physics physics { get; set; }
 
-        public virtual float Move(float x,int velocity,int direction)
+        public virtual float Move(float x, int velocity, int direction)
         {
-            return x + velocity*direction;
+            return x + velocity * direction;
         }
 
-        public virtual void DrawSprites(Graphics g,Image image, Rectangle destRectangle,Rectangle sourceRectangle)
+        public virtual void DrawSprites(Graphics g, Image image, Rectangle destRectangle, Rectangle sourceRectangle)
         {
-            g.DrawImage(image, destRectangle, sourceRectangle,GraphicsUnit.Pixel);
+            g.DrawImage(image, destRectangle, sourceRectangle, GraphicsUnit.Pixel);
 
         }
-
-        private void Update(object? sender, EventArgs e)
-        {
-          
-            
-        }
-    } 
+    }
 }

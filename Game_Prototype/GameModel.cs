@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using tainicom;
 using tainicom.Aether.Physics2D.Collision;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Game_Prototype
 {
@@ -19,47 +20,83 @@ namespace Game_Prototype
         public Maze maze;
         public Label tmpLabel;
         public PictureBox box;
-        public HashSet<Rectangle> HashSetRect;
         private bool jumping;
         private int velocityForCamera;
+        private (int, int) SizeOfWindow;
+        private float a;
+        private Random rnd;
+        private Timer timerForCamera;
+        private Rectangle CameraBounds;
+        private bool delete;
 
-        public GameModel(int plX, int plY, int MazeHeight, int MazeWidth)
+        public GameModel(int plX, int plY, int MazeHeight, int MazeWidth,(int,int) sizeForm)
         {
-            //force = 8;
-            HashSetRect = new HashSet<Rectangle>();
-            velocityForCamera = 9;
-            maze = CheckMaze(MazeHeight, MazeWidth);
-            player = new Player(new Point(plX, plY), new Size(107, 132),HashSetRect);
-            
+            velocityForCamera = 15;
+            maze = MakeMaze();
+            player = new Player(new Point(plX + 300, plY), new Size(107, 132));
+            SizeOfWindow = sizeForm;    
             #region
-
-            //dictActions = new Dictionary<Keys, Action>()
-            //{
-            //    {Keys.W, () => Jump(DateTime.Now.Millisecond/100f)},
-            //    {Keys.A, () => player.Move(player.CreatureBox.Location.X - 4, player.CreatureBox.Location.Y)},
-            //    {Keys.S, () => player.Move(player.CreatureBox.Location.X, player.CreatureBox.Location.Y + 4)},
-            //    {Keys.D, () => player.Move(player.CreatureBox.Location.X + 4, player.CreatureBox.Location.Y)}
-            //};
-            //rect = new HashSet<Rectangle>();
-            //grav = new Physics(player.transform.position, player.transform.size);
+            rnd = new Random(173971^DateTime.Now.Millisecond);
             #endregion
 
+            
+            timerForCamera = new Timer()
+            {
+                Interval = 25
+            };
+            timerForCamera.Tick += new EventHandler(CameraMovement);
+            SetSettingsForPictureBoxes();
+            CameraBounds = new Rectangle(0, SizeOfWindow.Item2/2, box.Width, 500);
+            timerForCamera.Start();
+        }
+
+        private void CameraMovement(object? sender, EventArgs e)
+        {
+            //delete = CameraBounds.Contains(new Point((int) playerFromKeyboard.physics.transform.position.X,
+            //    (int) playerFromKeyboard.physics.transform.position.Y));
+            //    if (delete)
+            //        return;
+            //var diffY = playerFromKeyboard.physics.transform.position.Y - CameraBounds.Y;
+            //if (diffY < 0)
+            //{
+            //    if( box.Top < 200)
+            //    {
+            //        //box.Top += playerFromKeyboard.permutation.velocityForPlayer + 10;
+            //        //tmpLabel.Top -= playerFromKeyboard.permutation.velocityForPlayer + 10;
+            //        //CameraBounds.Y -= playerFromKeyboard.permutation.velocityForPlayer + 10;
+            //    }
+            //}
+            //else
+            //{
+            //    if (box.Top >-640)
+            //    {
+            //        //box.Top -= playerFromKeyboard.permutation.velocityForPlayer + 15;
+            //        //tmpLabel.Top += playerFromKeyboard.permutation.velocityForPlayer + 15;
+            //        //CameraBounds.Y -= playerFromKeyboard.permutation.velocityForPlayer + 15;
+            //    }
+            //    //timerForCamera.Stop();
+            //}
+
+        }
+
+        private void SetSettingsForPictureBoxes()
+        {
             box = new PictureBox()
             {
                 BackgroundImage = Sources._123,
-                Height = 1100,
-                Width = 2000,
-
+                Height =6000,
+                Width = 6000,
             };
+            box.Image = maze.PrintMaze(6000, 5000);
+            
             tmpLabel = new Label()
             {
                 Text = UpdateLabel(),
                 Size = new Size(200, 200),
-                Location = new Point(1000,0)
+                Location = new Point(1000, 0)
             };
             box.Paint += new PaintEventHandler(DrawPlayer);
             box.Controls.Add(tmpLabel);
-
         }
         public void KeyIsDownForPlayer(KeyEventArgs e)
         {
@@ -67,22 +104,22 @@ namespace Game_Prototype
             switch (e.KeyCode)
             {
                 case Keys.A:
-                    player.permutation.goLEFT = true;
-                    player.image = Sources.idle_3_1;
-                    player.image.RotateFlip(RotateFlipType.Rotate180FlipY);
-                    player.dx = 8;
+                    SetPropertiesForPlayerAnimation(ref player.permutation.goLEFT,true,150,120,75,Sources.RUN_PNG,true);
                     break;
                 case Keys.D:
-                    player.permutation.goRIGHT = true;
-                    player.image = Sources.idle_3_1;
-                    player.dx = 4;
-                    
+                    SetPropertiesForPlayerAnimation(ref player.permutation.goRIGHT,true, 150, 120, 4, Sources.RUN_PNG, false);
                     break;
-                case Keys.W when !jumping:
-                    jumping = true;
+                case Keys.W when player.physics.couldJump:
                     player.permutation.goUP = true;
                     break;
-                
+                case Keys.X:
+                    box.Top += player.permutation.velocityForPlayer;
+                    tmpLabel.Top -= player.permutation.velocityForPlayer;
+                    break;
+                case Keys.Z:
+                    box.Top -= player.permutation.velocityForPlayer;
+                    tmpLabel.Top += player.permutation.velocityForPlayer;
+                    break;
             }
             #region MyRegion
 
@@ -100,44 +137,61 @@ namespace Game_Prototype
             //}
             #endregion
         }
+        public void KeyIsUpForPlayer(KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.D:
+                    SetPropertiesForPlayerAnimation(ref player.permutation.goRIGHT, false,92,90,4,Sources.idle_3_1,false);
+                    break;
+                case Keys.A:
+                    SetPropertiesForPlayerAnimation(ref player.permutation.goLEFT, false, 92, 90, 9, Sources.idle_3_1, true);
+                    break;
+                case Keys.W:
+                    player.permutation.goUP = false;
+                    player.permutation.goDOWN = true;
+                    break;
+            }
+        }
+
+        public void SetPropertiesForPlayerAnimation(ref bool refPlayerTurn, bool answer, int sourceWidth, int destWidth,int dx, Bitmap imagePlayer,bool isRotating)
+        {
+            refPlayerTurn = answer;
+            player.image = imagePlayer;
+            player.widthForGraphics = sourceWidth;
+            player.destWidthForGraphics = destWidth;
+            if (isRotating)
+                player.image.RotateFlip(RotateFlipType.Rotate180FlipY);
+            player.dx = dx;
+        }
 
         public async void MainTimerEvent(int rightSide, EventArgs e)
         {
 
-            //TODO Переделать управление -> лагает
-
-            //player.CreatureBox.Top += jumpVelocity;
-            #region MyRegion
-            //if (goLeft && player.physics.transform.position.X > 60)
-            //{
-            //    player.physics.transform.position.X -= velocityForPlayer;
-            //}
-
-            //else if (goRight && player.physics.transform.position.X + player.physics.transform.size.Width < 1600)
-            //{
-            //    player.physics.transform.position.X += velocityForPlayer;
-            //}
-
-            ////if (goLeft && box.Left < 0)
-            ////{
-            ////    box.Left += velocityForCamera;
-            ////    tmpLabel.Left -= velocityForCamera;
-            ////} 
-            #endregion
-
-            //player.physics.transform.position.X = player.Move(player.physics.transform.position.X, player.permutation.velocityForPlayer, 0);
             player.UpdatePlayer();
             //TODO вынести код ниже в карту
-            if (player.permutation.goRIGHT && box.Left > -500  && PermutationOfCamera.cameraLeft)
+            if (player.permutation.goRIGHT && DirectionForCamera.CameraLeft)
             {
+                //playerFromKeyboard.permutation.velocityForPlayer = 9;
                 box.Left -= velocityForCamera;
                 tmpLabel.Left += velocityForCamera;
             }
-            if (player.permutation.goLEFT && box.Left < 0 && PermutationOfCamera.cameraRight)
+            if (player.permutation.goLEFT && box.Left < 0 && DirectionForCamera.CameraRight)
             {
                 box.Left += velocityForCamera;
                 tmpLabel.Left -= velocityForCamera;
             }
+            //if (player.permutation.goDOWN )
+            //{
+            //    box.Top += player.permutation.velocityForPlayer;
+            //    tmpLabel.Top -= player.permutation.velocityForPlayer;
+            //}
+            //if (player.permutation.goUP )
+            //{
+            //    box.Top -= player.permutation.velocityForPlayer + 20;
+            //    tmpLabel.Top += player.permutation.velocityForPlayer + 20;
+            //}
+
 
             box.Refresh();
             tmpLabel.Text = UpdateLabel();
@@ -149,111 +203,63 @@ namespace Game_Prototype
         private void DrawPlayer(object sender, PaintEventArgs e)
         {
             player.DrawSprites(e.Graphics, player.image, Rectangle.Empty, Rectangle.Empty);
-            
         }
 
-        private void CheckIntersections()
-        {
-            //foreach (Control xControl in box.Controls)
-            //{
-            //    if (xControl is PictureBox && (string)xControl.Tag == "wall")
-            //        if (player.CreatureBox.Bounds.IntersectsWith(xControl.Bounds) && jumping == false)
-            //        {
-            //            force = 8;
-            //            //jumping = false;
-            //            //player.CreatureBox.Top = xControl.Top - player.CreatureBox.Height;
-            //            jumpVelocity = 0;
-            //        }
-            //    xControl.BringToFront();
-            //}
-        }
-        public void KeyIsUpForPlayer(KeyEventArgs e)
-        {
-            #region MyRegion
 
-            switch (e.KeyCode)
-            {
-                case Keys.D:
-                    player.permutation.goRIGHT = false;
-                    break;
-                case Keys.A:
-                    player.permutation.goLEFT = false;
-                    break;
-            }
-
-            if (jumping)
-            {
-                jumping = false;
-                player.permutation.goUP = false;
-                player.permutation.goDOWN = true;
-            }
-            #endregion
-        }
         public string UpdateLabel()
         {
-            return $"HP: {player.HP}\nIsAgressive: {player.isAgressive}\nLocation:{player.physics.transform.position}\nLeft:{player.permutation.goLEFT}\nRight:{player.permutation.goRIGHT}\nDown:{player.permutation.goDOWN}\nUp:{player.permutation.goUP}";
+            return $"HP: {player.HP}" +
+                   $"\nIsAgressive: {delete}" +
+                   $"\nLeft:{player.permutation.goLEFT}" +
+                   $"\nRight:{player.permutation.goRIGHT}" +
+                   $"\nDown:{player.permutation.goDOWN}" +
+                   $"\nUp:{player.permutation.goUP}" +
+                   $"\nCameraX:{CameraBounds.X}" +
+                   $"\nCameraY:{CameraBounds.Y}" +
+                   $"\nLocation:{player.physics.transform.position}";//+
+            //$"\nBoxLoc:{box.Location}" +
+            //$"\nBoxLeft:{box.Top}" +
+            //$"\nGravity: {playerFromKeyboard.physics.gravity}";
         }
-
-        //public void Jump(float a)
-        //{
-        //    if ((keysFromForm & Keys.W) == Keys.W) 
-        //       player.CreatureBox.Location = new Point(player.CreatureBox.Location.X, player.CreatureBox.Location.Y-1);
-        //}
-
-        private static Maze MakeMaze(int MazeWidth, int MazeHeight)
+        private static Maze MakeMaze()
         {
-            var tmp = new Maze(MazeWidth, MazeHeight);
-            for (int i = 0; i < 6; i++)
-                tmp.maze = tmp.Generate();
+            var tmp = new Maze();
             return tmp;
         }
 
-        public void PrintMaze()
+
+        public Maze CheckMaze()
         {
-            var t = new Bitmap(box.Width, box.Height);
-            var side = 95;
-            var g = Graphics.FromImage(t);
-           
-            
-            for (int x = 0; x < maze.maze.GetLength(0); x++)
-            {
-                for (int y = 0; y < maze.maze.GetLength(1); y++)
-                {
-                    if (maze.maze[x, y] == MapCell.Wall)
-                    {
-                        g.DrawImage(Sources.Tile_1, x * side, y * side, side, side);
-                        #region MyRegion
-                        //rect.Add(new Rectangle(x * side, y * side, side, side));
-                        //var e = new PictureBox()
-                        //{
-                        //    Image = Sources.Tile_1,
-                        //    Tag = "wall",
-                        //    Location = new Point(x * side, y * side),
-                        //    Size = new Size(side, side)
-                        //};
-                        //box.Controls.Add(e); 
-                        #endregion
-
-                        HashSetRect.Add(new Rectangle(x * side, y * side, side, side));
-
-                    }
-                }
-            }
-            box.Image = t;
-
-        }
-
-        public Maze CheckMaze(int MazeWidth, int MazeHeight)
-        {
-            var tmp = new Maze(MazeWidth, MazeHeight)
+            var tmp = new Maze()
             {
                 maze = new [,]
                 {
-                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
                     {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
                     {MapCell.Empty, MapCell.Empty,MapCell.Wall, MapCell.Wall, MapCell.Empty, MapCell.Empty, MapCell.Empty},
                     {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty},
-                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Wall, MapCell.Wall},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Wall, MapCell.Wall, MapCell.Wall, MapCell.Wall, MapCell.Wall},
+                }
+            };
+            var tmp2 = new Maze()
+            {
+                maze = new[,]
+                {
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+                    {MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty,MapCell.Empty, MapCell.Empty, MapCell.Wall, MapCell.Empty, MapCell.Empty,},
+
                 }
             };
             return tmp;

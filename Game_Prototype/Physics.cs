@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Game_Prototype
 {
@@ -10,170 +9,184 @@ namespace Game_Prototype
         public float dx;
         public bool isJumping;
         public float gravity = -9.8f;
-        private HashSet<Rectangle> HashSetWalls;
+        //private HashSet<Rectangle> HashSetWalls;
         //public PermutationForCamera cameraMovement;
+        //private PermutationForCreature playerMovement;
+        public bool couldJump;
 
-        public Physics(PointF pos, Size size, HashSet<Rectangle> hashHashSetWalls)
+        public Creature Creature { get; set; }
+
+        public Physics(PointF pos, Size size, Creature creature)
         {
             transform = new Transform(pos, size);
             gravity = 0;
-            a = 0.45f;
+            a = 0.47f;
             isJumping = false;
-            HashSetWalls = hashHashSetWalls;
-            
+            Creature = creature;
+            //HashSetWalls = hashHashSetWalls;
+            //playerMovement = playerMovements;
+            //Creature = creature;
         }
 
         public void CalculatePhysics()
         {
-            if (transform.position.Y < 150 || isJumping)
+            if (couldJump && gravity >= -15.8f && gravity <= -5)
             {
                 transform.position.Y += gravity;
                 gravity += a;
+                // counterForJump++;
             }
 
-            if (transform.position.Y > 70)
+            if ((gravity > -5 || gravity < -15.8f))
             {
-                //isActivated = false;
-                isJumping = false;
+                Creature.permutation.goUP = false;
+                couldJump = false;
             }
+
         }
 
         public void ApplyPhysics()
         {
             CalculatePhysics();
+           
         }
 
         public void AddForce()
         {
 
-            if (!isJumping)
+            if (!Creature.permutation.goUP)
             {
-                isJumping = true;
-                gravity = -10;
+                gravity = -15.8f;
             }
         }
 
         public void DownForce()
         {
-            transform.position.Y -= gravity;
-            gravity -= a;
+
+            if (Creature.permutation.goDOWN)
+            {
+                Creature.permutation.goUP = false;
+                transform.position.Y -= gravity;
+                gravity -= a;
+                // counterForJump--;
+            }
         }
 
-        //public bool Collide()
-        //{
 
-        //}
-        //public float CalculateGravity()
-        //{
-        //    if (dx != 0)
-        //    {
-        //        transform.position.X +=dx;
-        //    }
-
-        //    if (transform.position.Y < 700)
-        //    {
-        //        transform.position.Y += gravity;
-        //        gravity += a;
-        //    }
-
-        //    return gravity;
-        //}
-
-        //public void AddForce()
-        //{
-        //    gravity = -10;
-        //}
-        //public virtual Point Update(float dt)
-        //{
-        //    var force = Force;
-        //    Force = PointF.Empty;
-        //    if (IsGravityActive)
-        //        force = new PointF(force.X, force.Y + 9.8f);
-        //    Velocity = new PointF(Velocity.X + force.X * dt, Velocity.Y + force.Y * dt);
-        //    return Position = new Point((int) (Position.X + Velocity.X * dt), (int) (Position.Y + Velocity.Y * dt));
-
-        //}
-
-        public bool Collide(ref PermutationForPlayer permutatuion)
+        public bool Collide(ref PermutationForCreature permutatuion)
         {
             var dirSize = new Size();
-            foreach (var cell in HashSetWalls)
+            foreach (var cell in Maze.HashSetWalls)
             {
                 if (cell.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
                     transform.size + new Size(-10, 10))))
                 {
                     return true;
                 }
-                #region -
-                //var delta = new PointF();
-                //delta.X = (transform.position.X + transform.size.Width / 2) - (cell.X + cell.Width / 2);
-                //delta.Y = (transform.position.Y + transform.size.Height / 2) - (cell.Y + cell.Height / 2);
-                //if (Math.Abs(delta.X) <= transform.size.Width / 2 + cell.Width / 2)
-                //    return true;
-                //if (Math.Abs(delta.Y) <= transform.size.Height / 2 + cell.Height / 2)
-                //    return true; 
-                #endregion
-
-
             }
             return false;
         }
         public bool CollideBottom()
         {
-            foreach (var wall in HashSetWalls)
+            foreach (var wall in Maze.HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X+5 , wall.Location.Y - 10, wall.Width-10, 5);
+                var tmp = new Rectangle(wall.Location.X  + 10 , wall.Location.Y-10 , wall.Width -15, 15);
                 if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
-                    transform.size)))
+                    transform.size - new Size(10,0))))
+                {
+                    Creature.permutation.goDOWN = false;
+                    if (Creature is Player)
+                    {
+                        AddForce();
+                        couldJump = true;
+                        DirectionForCamera.CameraDown = false;
+                        //counterForJump = 0;
+                    }
+
                     return true;
+                }
+            }
+            if (Creature is Player)
+            {
+                Creature.permutation.goDOWN = true;
+                couldJump = false;
+                DirectionForCamera.CameraDown = true;
             }
 
             return false;
         }
         public bool CollideLeft()
         {
-            foreach (var wall in HashSetWalls)
+            foreach (var wall in Maze.HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X - 10, wall.Location.Y + 3, 1, wall.Height - 3);
-                if (tmp.IntersectsWith(new Rectangle(new Point((int) transform.position.X, (int) transform.position.Y),
-                    transform.size)))
+                var tmp = new Rectangle(wall.Location.X + 15, wall.Location.Y + 3, 10, wall.Height - 2);
+                if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X + transform.size.Width, (int)transform.position.Y),
+                    new Size(5,transform.size.Height-5))))
                 {
-                    PermutationOfCamera.cameraLeft = false;
+                    if (Creature is Player)
+                    {
+                        DirectionForCamera.CameraLeft = false;
+                        //counterForJump = 0;
+                    }
+
                     return true;
                 }
             }
 
-            PermutationOfCamera.cameraLeft = true;
+            DirectionForCamera.CameraLeft = true;
 
             return false;
         }
         public bool CollideRight()
         {
-            foreach (var wall in HashSetWalls)
+            foreach (var wall in Maze.HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X + wall.Width + 10, wall.Location.Y + 3, 1, wall.Height - 3);
-                if (tmp.IntersectsWith(new Rectangle(new Point((int) transform.position.X, (int) transform.position.Y),
-                    transform.size)))
+                var tmp = new Rectangle(wall.Location.X + wall.Width - 5, wall.Location.Y + 3, 5, wall.Height - 10);
+                if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X - 3 , (int)transform.position.Y),
+                    new Size(3,transform.size.Height-5))))
                 {
-                    PermutationOfCamera.cameraRight = false;
+                    if (Creature is Player)
+                    {
+                        DirectionForCamera.CameraRight = false;
+                        //counterForJump = 0;
+                    }
                     return true;
                 }
             }
 
-            PermutationOfCamera.cameraRight = true;
+            DirectionForCamera.CameraRight = true;
             return false;
         }
 
         public bool CollideUp()
         {
-            foreach (var wall in HashSetWalls)
+            foreach (var wall in Maze.HashSetWalls)
             {
-                var tmp = new Rectangle(wall.Location.X + 10 , wall.Location.Y - 1, wall.Width + 6, 1);
-                if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
-                    transform.size)))
+                var tmp = new Rectangle(wall.Location.X + 5, wall.Location.Y + wall.Height -15, wall.Width - 15, 10);
+                if (tmp.IntersectsWith(new Rectangle(new Point((int) transform.position.X, (int) transform.position.Y),
+                    new Size(transform.size.Width - 15, 5))))
+                { 
+                    
+                    if (Creature is Player)
+                    {
+                        //AddForce();
+                        couldJump = false;
+                        DirectionForCamera.CameraUp = false;
+                        //counterForJump = 0;
+                    }
                     return true;
-            }
+                }
 
+                
+            }
+            Creature.permutation.goUP = true;
+            if (Creature is Player)
+            {
+               
+                couldJump = true;
+                DirectionForCamera.CameraUp = true;
+                //counterForJump = 0;
+            }
             return false;
         }
     }

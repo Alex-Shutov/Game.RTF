@@ -1,25 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Security.Cryptography.Xml;
+using System.Threading;
 
 namespace Game_Prototype
 {
-    class Player : Creature
+    internal class Player : Creature 
     {
-        public PermutationForPlayer permutation;
         private int check;
-        public int frameCount;
-        public int animationCount;
+        private int frameCount;
         public int dx;
-        public Physics physics;
-        public Player(PointF x, Size y,HashSet<Rectangle> hashset)
+        public int widthForGraphics;
+        public int destWidthForGraphics;
+        public Player(PointF x, Size y)
         {
-            permutation = new PermutationForPlayer();
-            permutation.Setvelocity(9);
+            permutation = new PermutationForCreature();
+            //permutation.Setvelocity(9);
+            permutation.velocityForPlayer = 15;
             HP = 100;
             image = Sources.idle_3_1;
-            dx = 3;
-            physics = new Physics(pos: x, size:y,hashset);
+            dx = 10;
+            isAgressive = false;
+            physics = new Physics(pos: x, size:y,this);
+            widthForGraphics = 90;
+            destWidthForGraphics = 90;
         }
 
         public void UpdatePlayer()
@@ -28,7 +32,7 @@ namespace Game_Prototype
         }
         public override float Move(float f, int velocity, int direction)
         {
-            if (permutation.goUP)
+            if (permutation.goUP && !physics.CollideUp())
             {
                 physics.AddForce();
                 physics.ApplyPhysics();
@@ -37,14 +41,12 @@ namespace Game_Prototype
             {
                 physics.DownForce();
             }
-
-            if (permutation.goLEFT && physics.transform.position.X > 60 && !physics.CollideRight())
+            if (permutation.goLEFT && physics.transform.position.X > -10 && !physics.CollideRight())
             {
                 return base.Move(physics.transform.position.X, velocity, -1);
             }
-           // permutation.goRIGHT = true;
-           bool stateLeft = !physics.CollideLeft();
-            if (permutation.goRIGHT && physics.transform.position.X + physics.transform.size.Width < 1600 && stateLeft)
+            var stateLeft = !physics.CollideLeft();
+            if (permutation.goRIGHT  && stateLeft)
             { 
                 return base.Move(physics.transform.position.X, velocity, 1);
             }
@@ -53,7 +55,6 @@ namespace Game_Prototype
 
         public override void DrawSprites(Graphics g, Image image, Rectangle destRectangle, Rectangle sourceRectangle)
         {
-            animationCount++;
             #region Draw(optional)
             //g.DrawImage(Sources.idle_3_1, new Rectangle((int)transform.position.X, (int)transform.position.Y, 90, 150), new Rectangle(frameCount * 92+5, 0, 95, 150),
             //    GraphicsUnit.Pixel);
@@ -83,7 +84,7 @@ namespace Game_Prototype
             //if (physics.isJumping)
             //base.DrawSprites(g, image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, 90, 150), new Rectangle(frameCount * 92 + dx, 0, 95, 150)); 
             #endregion
-            base.DrawSprites(g, image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, 90, 150), new Rectangle(frameCount * 92 + dx, 0, 95, 150));
+            base.DrawSprites(g, image, new Rectangle((int)physics.transform.position.X, (int)physics.transform.position.Y, destWidthForGraphics, 150), new Rectangle(frameCount * widthForGraphics + dx, 0, widthForGraphics, 150));
 
             frameCount++;
             if (frameCount == 7)
