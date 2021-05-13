@@ -4,7 +4,8 @@ using System.Windows.Forms;
 
 namespace Game_Prototype
 {
-    public abstract class Creature : ICreature
+    public abstract class CreatureBase 
+
     {
         public PermutationForCreature permutation { get; set; }
         public Bitmap image { get; set; }

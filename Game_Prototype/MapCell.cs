@@ -8,7 +8,12 @@ namespace Game_Prototype
     {
        
         Wall,
-        Empty
-
+        Empty,
+        Lift,
+        EnemyFind,
+        NPCFind,
+        BanditFind,
+        ChestFind,
+        BlackWall,
     }
 }

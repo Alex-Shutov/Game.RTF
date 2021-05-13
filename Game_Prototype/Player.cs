@@ -2,20 +2,23 @@
 using System.Drawing;
 using System.Security.Cryptography.Xml;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Game_Prototype
 {
-    internal class Player : Creature 
+    internal class Player : CreatureBase 
     {
-        private int check;
+        public int UpCounter;
         private int frameCount;
         public int dx;
         public int widthForGraphics;
         public int destWidthForGraphics;
+        public PictureBox CameraBox;
         public Player(PointF x, Size y)
         {
             permutation = new PermutationForCreature();
             //permutation.Setvelocity(9);
+            UpCounter = 1;
             permutation.velocityForPlayer = 15;
             HP = 100;
             image = Sources.idle_3_1;
@@ -24,6 +27,13 @@ namespace Game_Prototype
             physics = new Physics(pos: x, size:y,this);
             widthForGraphics = 90;
             destWidthForGraphics = 90;
+            CameraBox = new PictureBox()
+            {
+                Location = new Point(-500, 0),
+                Size = new Size(90, 150),
+                BackColor = Color.Blue,
+            };
+
         }
 
         public void UpdatePlayer()
@@ -40,6 +50,7 @@ namespace Game_Prototype
             else if (!physics.CollideBottom())
             {
                 physics.DownForce();
+                CameraBox.Top += velocity;
             }
             if (permutation.goLEFT && physics.transform.position.X > -10 && !physics.CollideRight())
             {
@@ -50,6 +61,7 @@ namespace Game_Prototype
             { 
                 return base.Move(physics.transform.position.X, velocity, 1);
             }
+            GetHP();
             return physics.transform.position.X;
         }
 
@@ -91,13 +103,18 @@ namespace Game_Prototype
                 frameCount = 0;
         }
 
-        public void GetHP(int tmp)
+        public void GetHP()
         {
-            if (tmp > physics.transform.position.Y)
-                check++;
-            else check = 0;
-            if (check % 200 == 0 && check != 0)
+            if (permutation.goUP && physics.gravity > -10)
+                UpCounter++;
+            if (UpCounter % 20 == 0)
+            {
                 HP -= 10;
+                UpCounter = 1;
+            }
+
+            if (!physics.couldJump && physics.gravity < -25)
+                UpCounter = 1;
         }
     }
 }

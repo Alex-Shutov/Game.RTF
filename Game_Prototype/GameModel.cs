@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -23,11 +24,8 @@ namespace Game_Prototype
         private bool jumping;
         private int velocityForCamera;
         private (int, int) SizeOfWindow;
-        private float a;
-        private Random rnd;
         private Timer timerForCamera;
-        private Rectangle CameraBounds;
-        private bool delete;
+        public TextBox textOnCollides;
 
         public GameModel(int plX, int plY, int MazeHeight, int MazeWidth,(int,int) sizeForm)
         {
@@ -36,17 +34,16 @@ namespace Game_Prototype
             player = new Player(new Point(plX + 300, plY), new Size(107, 132));
             SizeOfWindow = sizeForm;    
             #region
-            rnd = new Random(173971^DateTime.Now.Millisecond);
+            //rnd = new Random(173971^DateTime.Now.Millisecond);
             #endregion
 
-            
+            textOnCollides = new TextBox();
             timerForCamera = new Timer()
             {
                 Interval = 25
             };
             timerForCamera.Tick += new EventHandler(CameraMovement);
             SetSettingsForPictureBoxes();
-            CameraBounds = new Rectangle(0, SizeOfWindow.Item2/2, box.Width, 500);
             timerForCamera.Start();
         }
 
@@ -85,9 +82,9 @@ namespace Game_Prototype
             {
                 BackgroundImage = Sources._123,
                 Height =6000,
-                Width = 6000,
+                Width = 7000,
             };
-            box.Image = maze.PrintMaze(6000, 5000);
+            box.Image = maze.PrintMaze(box.Height, box.Width);
             
             tmpLabel = new Label()
             {
@@ -95,8 +92,19 @@ namespace Game_Prototype
                 Size = new Size(200, 200),
                 Location = new Point(1000, 0)
             };
+            AddControlsToMainControl();
             box.Paint += new PaintEventHandler(DrawPlayer);
+            box.Controls.Add(textOnCollides);
             box.Controls.Add(tmpLabel);
+            box.Controls.Add(player.CameraBox);
+        }
+
+        private void AddControlsToMainControl()
+        {
+            foreach (var element in maze.GetControlsForParentYield())
+            {
+                box.Controls.Add(element);
+            }
         }
         public void KeyIsDownForPlayer(KeyEventArgs e)
         {
@@ -150,6 +158,7 @@ namespace Game_Prototype
                 case Keys.W:
                     player.permutation.goUP = false;
                     player.permutation.goDOWN = true;
+                    player.CameraBox.Top += player.permutation.velocityForPlayer;
                     break;
             }
         }
@@ -181,16 +190,27 @@ namespace Game_Prototype
                 box.Left += velocityForCamera;
                 tmpLabel.Left -= velocityForCamera;
             }
-            //if (player.permutation.goDOWN )
-            //{
-            //    box.Top += player.permutation.velocityForPlayer;
-            //    tmpLabel.Top -= player.permutation.velocityForPlayer;
-            //}
-            //if (player.permutation.goUP )
-            //{
-            //    box.Top -= player.permutation.velocityForPlayer + 20;
-            //    tmpLabel.Top += player.permutation.velocityForPlayer + 20;
-            //}
+            if (player.physics.transform.position.Y > player.CameraBox.PointToScreen(player.CameraBox.Location).Y )
+            {
+                box.Top += player.permutation.velocityForPlayer;
+                tmpLabel.Top -= player.permutation.velocityForPlayer;
+                player.CameraBox.Top += player.permutation.velocityForPlayer;
+            }
+
+            if (box.Controls.Collide(player.physics.transform))
+            {
+                #region MyRegion
+                //textOnCollides.Visible = true;
+                //textOnCollides.Text = "fffff";
+                //textOnCollides.BackColor = Color.Aquamarine;
+                //textOnCollides.Location = new Point(SizeOfWindow.Item1 / 2 - 100, SizeOfWindow.Item2 / 2 + 300);
+                //textOnCollides.Size = new Size(300, 300); 
+                #endregion
+            }
+            else
+            {
+                textOnCollides.Visible = false;
+            }
 
 
             box.Refresh();
@@ -203,23 +223,22 @@ namespace Game_Prototype
         private void DrawPlayer(object sender, PaintEventArgs e)
         {
             player.DrawSprites(e.Graphics, player.image, Rectangle.Empty, Rectangle.Empty);
+            //e.Graphics.TransformPoints(CoordinateSpace.Device, CoordinateSpace.World,
+            //    new []{Point.Ceiling(player.physics.transform.position),});
         }
 
 
         public string UpdateLabel()
         {
             return $"HP: {player.HP}" +
-                   $"\nIsAgressive: {delete}" +
+                   $"\nIsCollide: {box.Controls.Collide(player.physics.transform)}" +
                    $"\nLeft:{player.permutation.goLEFT}" +
                    $"\nRight:{player.permutation.goRIGHT}" +
                    $"\nDown:{player.permutation.goDOWN}" +
                    $"\nUp:{player.permutation.goUP}" +
-                   $"\nCameraX:{CameraBounds.X}" +
-                   $"\nCameraY:{CameraBounds.Y}" +
-                   $"\nLocation:{player.physics.transform.position}";//+
-            //$"\nBoxLoc:{box.Location}" +
-            //$"\nBoxLeft:{box.Top}" +
-            //$"\nGravity: {playerFromKeyboard.physics.gravity}";
+                   $"\nCounterUp:{player.UpCounter}" +
+                   $"\nGracity:{player.physics.gravity}" +
+                   $"\nLocationCam:{player.CameraBox.PointToScreen(player.CameraBox.Location)}";
         }
         private static Maze MakeMaze()
         {

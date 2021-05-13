@@ -16,9 +16,6 @@ namespace Game_Prototype
 {
     public partial class Form1 : Form
     {
-
-        private Graphics graphics;
-
         private GameModel game;
         #region MyRegion
 
@@ -28,15 +25,10 @@ namespace Game_Prototype
         //private readonly int deathLimit = 3,
         //                     birthLimit = 4;
  #endregion
-        private const int MAX_LEAF_SIZE = 20;
-        private Stack<Leaf> leafs;
-        private Leaf dopLeaf;
 
-        public Form1()
+ public Form1()
         {
-            this.Location = new Point(0, 0);
             InitializeComponent();
-           
             Init();
             KeyPreview = true;
         }
@@ -55,81 +47,16 @@ namespace Game_Prototype
             var side = 70;  
             game = new GameModel(0, 0, 1920 / side, 1080 / side,(this.Width,this.Height)); ;
             this.Controls.Add(game.box);
-            //graphics = game.box.CreateGraphics();
             this.KeyDown += new KeyEventHandler(KeyIsDown);
             this.KeyUp += new KeyEventHandler(KeyIsUp);
             this.Paint += new PaintEventHandler(DrawGame);
             var timer1 = new Timer() { Interval = 15 };
             timer1.Tick += new EventHandler(MainTimerEvent);
             timer1.Start();
+            
 
         }
-        private void CreateLeafs()
-        {
-            var root = new Leaf(0, 0, this.Width, this.Height);
-            leafs.Push(root);
-            var rnd = new Random(DateTime.Now.Millisecond ^ 17341);
-            var isAlreadySplit = true;
-            var tmp = new Stack<Leaf>();
-            while (isAlreadySplit)
-            {
-
-                isAlreadySplit = false;
-
-                
-                tmp.Push(root);
-                // leafs.CopyTo(tmp.ToArray(),0);
-                foreach (var elementLeaf in leafs)
-                    if (elementLeaf.leftChildLeaf == null && elementLeaf.rightChildLeaf == null)
-                        if (elementLeaf.width > MAX_LEAF_SIZE || elementLeaf.height > MAX_LEAF_SIZE ||
-                            (float) rnd.NextDouble() > 0.75)
-                            if (elementLeaf.Split())
-                            {
-                                //    from elementLeaf 
-                                //        in tmp 
-                                //    where elementLeaf.leftChildLeaf == null 
-                                //          && elementLeaf.rightChildLeaf == null 
-                                //    where elementLeaf.width > MAX_LEAF_SIZE 
-                                //          || elementLeaf.height > MAX_LEAF_SIZE ||
-                                //    (float) rnd.NextDouble() > 0.25 where elementLeaf.Split() select elementLeaf)
-                                //{
-                                tmp.Push(elementLeaf.leftChildLeaf);
-                                tmp.Push(elementLeaf.rightChildLeaf);
-                                isAlreadySplit = true;
-                            }
-            }
-
-            leafs = tmp;
-        }
-
-        private Bitmap PrintLeafs()
-        {
-            var bush = new List<Brush>()
-                {
-                    Brushes.Aqua,
-                    Brushes.Black,
-                    Brushes.Blue,
-                    Brushes.Bisque,
-                    Brushes.Coral
-            };//graphics = MazeBox.CreateGraphics();
-            var t = new Bitmap(leafs.Peek().width, leafs.Peek().height);
-            graphics = Graphics.FromImage(t);
-            var rnd = new Random(DateTime.Now.Millisecond ^ 17391);
-            var counter = 0;
-            foreach (var e in leafs)
-            {
-               // var counter = 0;
-                graphics.FillRectangle(bush[rnd.Next(bush.Count)], e.x,e.y,e.width,e.height);
-                //MazeBox.Image = t;
-                //yield return t;
-            }
-
-            return t;
-
-            //Controls.Add(graphics);
-        }
-
-
+        
         private void StartButton_Click(object sender, EventArgs e)
         {
 
@@ -141,7 +68,7 @@ namespace Game_Prototype
 
         private  void DrawGame(object? sender, PaintEventArgs e)
         {
-         
+
         }
 
     }

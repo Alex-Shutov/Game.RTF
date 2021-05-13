@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Game_Prototype
 {
@@ -11,7 +12,7 @@ namespace Game_Prototype
         public string[] MapChars = new string[]
         {
             "00#                   #################################################00",
-            "00#                                                                   #00",
+            "00#L                                                                  #00",
             "00#########                                                       E  N#00",
             "00#                       E                                   #########00",
             "00#          #########################################KK######00000000#00",
@@ -37,7 +38,7 @@ namespace Game_Prototype
             "00### ###################################  ###############0000#    #00#00",
             "00### #00000000000000000000000000000000#   #000000000000000000#   ##00#00",
             "00### #0000000000000000000000000000000#   #000000##############    #00#00",
-            "00### #000000000000000000000000000000#   #0000000#           ###   #00#00",
+            "00### #000000000000000000000000000000#   #0000000#             #   #00#00",
             "00### #00000000000000000000000000000#   #00000000#             $$$$####00",
             "00### #00000#####000000000000000000#   #000000000T               #    #00",
             "00### #000##     ##00000000000000##   #0000000000L G           ###    #00",
@@ -61,14 +62,14 @@ namespace Game_Prototype
 
         };
         public MapCell[,] maze;
-        private readonly int deathLimit = 3;
-        private readonly int birthLimit = 4;
+        public  static List<PictureBox> arrayLift;
         private readonly Random rnd = new (DateTime.Now.Millisecond ^ 17349);
 
         public static HashSet<Rectangle> HashSetWalls = new HashSet<Rectangle>();
 
         public Maze()
         {
+            arrayLift = new List<PictureBox>();
             maze = GetEnumMaze();
         }
 
@@ -90,7 +91,7 @@ namespace Game_Prototype
                             mazeEnums[x, y] = MapCell.Wall;
                             break;
                         case 'L':
-                            mazeEnums[x, y] = MapCell.Wall;
+                            mazeEnums[x, y] = MapCell.Lift;
                             break;
                        case 'T':
                            mazeEnums[x, y] = MapCell.Wall;
@@ -164,12 +165,11 @@ namespace Game_Prototype
         //    return maze;
         //}
 
-        public Bitmap PrintMaze(int width, int height)
+        public Bitmap PrintMaze(int height, int width)
         {
             var t = new Bitmap(width, height);
             var side =90;
             var g = Graphics.FromImage(t);
-
 
             for (int x = 0; x < maze.GetLength(0); x++)
             {
@@ -185,11 +185,35 @@ namespace Game_Prototype
                         HashSetWalls.Add(new Rectangle(x * side, y * side, side, side));
 
                     }
+
+                    if (maze[x, y] == MapCell.Lift)
+                    {
+                        var tmp = new Bitmap( side,  side);
+                        //Graphics.FromImage(tmp).FillRectangle(Brushes.Aquamarine, x * side, y * side, side, side);
+                        var lift = new PictureBox()
+                        {
+                            BackColor = Color.Purple,
+                            Image = tmp,
+                            Location = new Point(x * side, y * side),
+                            Size = new Size(side, side),
+                            Tag = "LIFT",
+                        };
+                        arrayLift.Add(lift);
+                    }
+                        //g.FillRectangle(Brushes.Aqua, x * side, y * side, side, side);
+                        //HashSetWalls.Add(new Rectangle(x * side, y * side, side, side));
                 }
             }
 
             return t;
 
+        }
+        public IEnumerable<Control> GetControlsForParentYield()
+        {
+            foreach (Control liftBox in arrayLift)
+            {
+                yield return liftBox;
+            }
         }
     }
 }

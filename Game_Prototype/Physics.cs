@@ -14,18 +14,18 @@ namespace Game_Prototype
         //private PermutationForCreature playerMovement;
         public bool couldJump;
 
-        public Creature Creature { get; set; }
+        public CreatureBase CreatureBase { get; set; }
 
-        public Physics(PointF pos, Size size, Creature creature)
+        public Physics(PointF pos, Size size, CreatureBase creatureBase)
         {
             transform = new Transform(pos, size);
             gravity = 0;
             a = 0.47f;
             isJumping = false;
-            Creature = creature;
+            CreatureBase = creatureBase;
             //HashSetWalls = hashHashSetWalls;
             //playerMovement = playerMovements;
-            //Creature = creature;
+            //CreatureBase = creatureBase;
         }
 
         public void CalculatePhysics()
@@ -39,7 +39,7 @@ namespace Game_Prototype
 
             if ((gravity > -5 || gravity < -15.8f))
             {
-                Creature.permutation.goUP = false;
+                CreatureBase.permutation.goUP = false;
                 couldJump = false;
             }
 
@@ -54,7 +54,7 @@ namespace Game_Prototype
         public void AddForce()
         {
 
-            if (!Creature.permutation.goUP)
+            if (!CreatureBase.permutation.goUP)
             {
                 gravity = -15.8f;
             }
@@ -63,9 +63,9 @@ namespace Game_Prototype
         public void DownForce()
         {
 
-            if (Creature.permutation.goDOWN)
+            if (CreatureBase.permutation.goDOWN)
             {
-                Creature.permutation.goUP = false;
+                CreatureBase.permutation.goUP = false;
                 transform.position.Y -= gravity;
                 gravity -= a;
                 // counterForJump--;
@@ -94,8 +94,8 @@ namespace Game_Prototype
                 if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X, (int)transform.position.Y),
                     transform.size - new Size(10,0))))
                 {
-                    Creature.permutation.goDOWN = false;
-                    if (Creature is Player)
+                    CreatureBase.permutation.goDOWN = false;
+                    if (CreatureBase is Player)
                     {
                         AddForce();
                         couldJump = true;
@@ -106,9 +106,9 @@ namespace Game_Prototype
                     return true;
                 }
             }
-            if (Creature is Player)
+            if (CreatureBase is Player)
             {
-                Creature.permutation.goDOWN = true;
+                CreatureBase.permutation.goDOWN = true;
                 couldJump = false;
                 DirectionForCamera.CameraDown = true;
             }
@@ -123,7 +123,7 @@ namespace Game_Prototype
                 if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X + transform.size.Width, (int)transform.position.Y),
                     new Size(5,transform.size.Height-5))))
                 {
-                    if (Creature is Player)
+                    if (CreatureBase is Player)
                     {
                         DirectionForCamera.CameraLeft = false;
                         //counterForJump = 0;
@@ -145,7 +145,7 @@ namespace Game_Prototype
                 if (tmp.IntersectsWith(new Rectangle(new Point((int)transform.position.X - 3 , (int)transform.position.Y),
                     new Size(3,transform.size.Height-5))))
                 {
-                    if (Creature is Player)
+                    if (CreatureBase is Player)
                     {
                         DirectionForCamera.CameraRight = false;
                         //counterForJump = 0;
@@ -167,7 +167,7 @@ namespace Game_Prototype
                     new Size(transform.size.Width - 15, 5))))
                 { 
                     
-                    if (Creature is Player)
+                    if (CreatureBase is Player)
                     {
                         //AddForce();
                         couldJump = false;
@@ -179,8 +179,8 @@ namespace Game_Prototype
 
                 
             }
-            Creature.permutation.goUP = true;
-            if (Creature is Player)
+            CreatureBase.permutation.goUP = true;
+            if (CreatureBase is Player)
             {
                
                 couldJump = true;
