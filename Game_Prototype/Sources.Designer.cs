@@ -83,9 +83,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _2 {
+        internal static System.Drawing.Bitmap Bandit {
             get {
-                object obj = ResourceManager.GetObject("_2", resourceCulture);
+                object obj = ResourceManager.GetObject("Bandit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _3 {
+        internal static System.Drawing.Bitmap basket {
             get {
-                object obj = ResourceManager.GetObject("_3", resourceCulture);
+                object obj = ResourceManager.GetObject("basket", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _4 {
+        internal static System.Drawing.Bitmap ButtinTabTask {
             get {
-                object obj = ResourceManager.GetObject("_4", resourceCulture);
+                object obj = ResourceManager.GetObject("ButtinTabTask", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _5 {
+        internal static System.Drawing.Bitmap ButtonBasket {
             get {
-                object obj = ResourceManager.GetObject("_5", resourceCulture);
+                object obj = ResourceManager.GetObject("ButtonBasket", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _6 {
+        internal static System.Drawing.Bitmap buttonChest {
             get {
-                object obj = ResourceManager.GetObject("_6", resourceCulture);
+                object obj = ResourceManager.GetObject("buttonChest", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +133,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _7 {
+        internal static System.Drawing.Bitmap ButtonKeyWall {
             get {
-                object obj = ResourceManager.GetObject("_7", resourceCulture);
+                object obj = ResourceManager.GetObject("ButtonKeyWall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +143,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _8 {
+        internal static System.Drawing.Bitmap ButtonLift {
             get {
-                object obj = ResourceManager.GetObject("_8", resourceCulture);
+                object obj = ResourceManager.GetObject("ButtonLift", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,10 +153,66 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Idle___1 {
+        internal static System.Drawing.Bitmap CatEnd {
             get {
-                object obj = ResourceManager.GetObject("Idle___1", resourceCulture);
+                object obj = ResourceManager.GetObject("CatEnd", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream CatWin {
+            get {
+                return ResourceManager.GetStream("CatWin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Dialog {
+            get {
+                object obj = ResourceManager.GetObject("Dialog", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ExitGame {
+            get {
+                return ResourceManager.GetStream("ExitGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap foma_fizruk_nagiev {
+            get {
+                object obj = ResourceManager.GetObject("foma_fizruk_nagiev", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream GameDead {
+            get {
+                return ResourceManager.GetStream("GameDead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream GameMusic {
+            get {
+                return ResourceManager.GetStream("GameMusic", resourceCulture);
             }
         }
         
@@ -173,9 +229,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Idle_big_1 {
+        internal static System.Drawing.Bitmap KeyWall {
             get {
-                object obj = ResourceManager.GetObject("Idle_big_1", resourceCulture);
+                object obj = ResourceManager.GetObject("KeyWall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -183,9 +239,9 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Idle_Player_gif {
+        internal static System.Drawing.Bitmap kotyonok_na_plyazhe {
             get {
-                object obj = ResourceManager.GetObject("Idle_Player_gif", resourceCulture);
+                object obj = ResourceManager.GetObject("kotyonok_na_plyazhe", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -193,9 +249,49 @@ namespace Game_Prototype {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Player_idle_gif {
+        internal static System.Drawing.Bitmap Land_5 {
             get {
-                object obj = ResourceManager.GetObject("Player_idle_gif", resourceCulture);
+                object obj = ResourceManager.GetObject("Land_5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Land_6 {
+            get {
+                object obj = ResourceManager.GetObject("Land_6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Land_7 {
+            get {
+                object obj = ResourceManager.GetObject("Land_7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Land_8 {
+            get {
+                object obj = ResourceManager.GetObject("Land_8", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Lift {
+            get {
+                object obj = ResourceManager.GetObject("Lift", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -206,6 +302,76 @@ namespace Game_Prototype {
         internal static System.Drawing.Bitmap RUN_PNG {
             get {
                 object obj = ResourceManager.GetObject("RUN_PNG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Syndyk {
+            get {
+                object obj = ResourceManager.GetObject("Syndyk", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Syndyk_Open {
+            get {
+                object obj = ResourceManager.GetObject("Syndyk_Open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TabButton {
+            get {
+                object obj = ResourceManager.GetObject("TabButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TabButtonHeal {
+            get {
+                object obj = ResourceManager.GetObject("TabButtonHeal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TabButtonStone {
+            get {
+                object obj = ResourceManager.GetObject("TabButtonStone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TabMenu {
+            get {
+                object obj = ResourceManager.GetObject("TabMenu", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap textButton {
+            get {
+                object obj = ResourceManager.GetObject("textButton", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

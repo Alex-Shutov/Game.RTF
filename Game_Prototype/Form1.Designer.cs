@@ -24,8 +24,8 @@ namespace Game_Prototype
         #region Windows Form Designer generated code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        ///  Required methods for Designer support - do not modify
+        ///  the contents of this methods with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -41,7 +41,6 @@ namespace Game_Prototype
             this.StartButton.TabIndex = 1;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
-            this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // label1
             // 
@@ -56,11 +55,13 @@ namespace Game_Prototype
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1182, 753);
+            this.ClientSize = new System.Drawing.Size(1382, 753);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.StartButton);
             this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyIsDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyIsUp);
