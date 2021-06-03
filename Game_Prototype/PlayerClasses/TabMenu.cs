@@ -99,14 +99,17 @@ namespace Game_Prototype.PlayerClasses
             }
         }
 
-        public void DeleteElementHeal()
+        public bool DeleteElementHeal()
         {
             var element = listElements.Select(x => x).FirstOrDefault(x => x.Filling == ChestFill.Health);
             if (element != null)
             {
                 listElements[element.index] = new TabInventoryElement(ChestFill.Empty, new Point(dXInventory * 90 + 80, dYInventory * 90 + 120), new Size(80, 80), element.index);
                 Picture.Controls.Remove(element.Picture);
+                return true;
             }
+
+            return false;
         }
 
         public void DeleteTask(int index)

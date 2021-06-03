@@ -20,7 +20,6 @@ namespace Game_Prototype
         {
             isAlive = true;
             permutation = new PermutationForCreature();
-            hasKeyToOpenExit = true;
             UpCounter = 1;
             permutation.velocityForPlayer = 15;
             HP = 100;
@@ -72,7 +71,7 @@ namespace Game_Prototype
         }
 
 
-        //TODO убрать магию
+        //TODO убрать магию, нет mvc в коде ниже
         public void GetHP()
         {
             if (permutation.goUP)

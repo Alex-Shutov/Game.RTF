@@ -61,8 +61,8 @@ namespace Game_Prototype
 
         public void ActionHealFromInventory()
         {
-            Tab.DeleteElementHeal();
-            Player.Heal();
+            if (Tab.DeleteElementHeal())
+                Player.Heal();
         }
 
         public void SetPropertiesForPlayerAnimation(ref bool refPlayerTurn, bool answer, int sourceWidth, int destWidth, int dx, Bitmap imagePlayer, bool isRotating)
