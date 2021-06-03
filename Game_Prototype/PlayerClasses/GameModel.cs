@@ -37,6 +37,7 @@ namespace Game_Prototype
             containerLinks = container;
             Maze = MakeMaze(Player, container.mapDelegates);
             Tab = new TabMenu(sizeofWindow.Item1, sizeofWindow.Item2,container.tabDelegates);
+            TabMenu.DictTasks.Clear();
             Tab.AddTaskElement("Найти вход на 2 уровень бездны",0);
             timerForCamera.Start();
         }
